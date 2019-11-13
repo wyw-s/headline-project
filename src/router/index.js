@@ -1,14 +1,28 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-
+// 由于引用的为index文件，所以可以不用写到根地址
+// 引入主页文件；
+import Home from '../views/Home'
+// 引入登录页文件
+import login from '../views/login'
+// 注册全局路由；
 Vue.use(VueRouter)
 
 const routes = [
+  // 强制跳转到主页
   {
-    path: '/',
-    name: 'home',
+    path: '',
+    redirect: '/index'
+  },
+  // 主页路由；
+  {
+    path: '/index',
     component: Home
+  },
+  // 登录页路由；
+  {
+    path: '/login',
+    component: login
   }
   // {
   //   path: '/about',

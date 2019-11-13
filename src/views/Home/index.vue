@@ -1,13 +1,13 @@
 <template>
   <div>
-    <!-- 主页-->
+     主页
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'home',
+  name: 'index',
   components: {}
 }
 </script>
