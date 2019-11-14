@@ -8,7 +8,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 // 引入index.less文件。
 import './styles/index.less'
-// 引入axios问价；
+// 引入axios文件；
 import axios from 'axios'
 // 设置全局基地址；
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'

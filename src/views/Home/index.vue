@@ -33,7 +33,9 @@
       </el-aside>
       <!--右侧布局容器-->
       <el-container>
-        <el-header>顶部</el-header>
+        <el-header>
+          <layout-hearder></layout-hearder>
+        </el-header>
         <el-main>
           <!--放置二级路由容器-->
           内容展示区
@@ -44,9 +46,12 @@
 </template>
 
 <script>
-
+// 导入 layout 文件；
+import layoutHeader from '../../components/layout-header.vue'
 export default {
-  components: {}
+  components: {
+    'layout-hearder': layoutHeader
+  }
 }
 </script>
 
