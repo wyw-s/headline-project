@@ -79,7 +79,7 @@ export default {
               // } else {
               //   callback(new Error('你需要勾选条款与协议'))
               // }
-            // 利用三元表达式；
+              // 利用三元表达式；
               value ? callback() : callback(new Error('你需要勾选条款与协议'))
             }
           }
@@ -94,12 +94,36 @@ export default {
       // validate() 可以对整个表单进行效验，效验的规则：使用已有的规则重新进行效验
       this.$refs[ruleForm].validate((isok) => {
         if (isok) {
-        // 如果为true 则通过效验
-        // 则进行下一步 调用接口 完成登录；
+          // 如果为true 则通过效验
+          // 则进行下一步 调用接口 完成登录；
           console.log('效验成功')
+          // 发送登录请求开始登录；
+          this.$axios({
+            // 设置请求方式；
+            method: 'POST',
+            // 设置请求地址；
+            url: '/authorizations',
+            // 设置请求参数；
+            data: this.ruleform
+          }).then((res) => {
+            // console.log(res)
+            // 判断
+            if (res.status === 201) {
+              /*
+              * 1、登录成功则把token保存到本地；
+              * 2、跳转到主页面==》编程式导航 */
+              window.localStorage.setItem('login_token', res.data.data.token)
+              // 登录成功则跳转到 主页面；
+              this.$router.push('/')// 不能为空字符串 至少要写 /
+            }
+          }).catch(() => {
+            this.$message({
+              message: '手机号或者验证码错误',
+              type: 'warning'
+            })
+          })
         }
       })
-      // this.$refs.ruleForm.validate()
     }
   }
 }

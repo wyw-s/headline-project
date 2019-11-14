@@ -13,7 +13,7 @@ import axios from 'axios'
 // 设置全局基地址；
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 // 把axios赋值给全局对象；
-Vue.prototype.$axios = axios
+Vue.prototype.$axios = axios // 将axios共享出去；
 // 注册全局 element-ui
 Vue.use(ElementUI)
 Vue.config.productionTip = false
