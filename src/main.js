@@ -6,6 +6,12 @@ import router from './router'
 import ElementUI from 'element-ui'
 // 引入element-ui 样式文件。
 import 'element-ui/lib/theme-chalk/index.css'
+/*
+* 注意：加载第三方包中的具体文件不需要写具体路径，直接写包名即可
+* 总结就是："包名/具体文件路径"
+* */
+// 引入nprogress样式文件；
+import 'nprogress/nprogress.css'
 // 引入index.less文件。
 import './styles/index.less'
 // 引入axios文件；

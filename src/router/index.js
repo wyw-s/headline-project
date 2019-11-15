@@ -13,6 +13,8 @@ import Home from '@/views/Home'
 import Article from '@/views/article'
 // 引入发布模块；
 import Publish from '@/views/publish'
+// 引入nprogress文件；
+import NProgress from 'nprogress'
 // 引入注册全局路由；
 Vue.use(VueRouter)
 
@@ -50,6 +52,42 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+/*
+* router.beforeEach((to, from, next) => {
+* 注册一个全局前置守卫：
+* 参数1：to，将要进入目标的路由对象;
+* 参数2：from，将要离开的路由对象
+* 参数3：next，它是一个方法，用于路由放行
+* })
+* */
+// 路由导航前置钩子函数，在未完成前允许我们做一些事；
+router.beforeEach((to, from, next) => {
+  // 开启进度条；
+  NProgress.start()
+  // console.log(to)
+  // console.log(from)
+  // console.log(next)
+  /*
+  * 因为所有的页面都会经过判断，所以需要判断路由经过时是否是登录页login；
+  * 若是则直接放行；若不是的则需要进行验证用户的登录状态 */
+  if (to.path === '/login') {
+    next()
+    return
+  }
+  // 若登录的是非登录状态，则需验证；
+  // 获取本地的token值；
+  const token = window.localStorage.getItem('login_token')
+  // 判断token 是否存在；存在则进入下个钩子函数；若不存在强制跳转到登录页
+  token ? next() : next('/login')
+})
+
+/*
+* 路由导航后置钩子函数，在路由导航完成后允许我们做一些事；
+* 路由导航结束后，关闭进度条 */
+router.afterEach(() => {
+  NProgress.done()
 })
 
 export default router
