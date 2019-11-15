@@ -79,8 +79,16 @@ router.beforeEach((to, from, next) => {
   // 若登录的是非登录状态，则需验证；
   // 获取本地的token值；
   const token = window.localStorage.getItem('login_token')
-  // 判断token 是否存在；存在则进入下个钩子函数；若不存在强制跳转到登录页
-  token ? next() : next('/login')
+  /*
+  * 判断token 是否存在；存在则进入下个钩子函数；若不存在强制跳转到登录页
+  * 如果所在的登录页是在非登陆状态下访问的非登录页面后跳转而来的，
+  * 那么这里手动的终止进度条,否则进度条不会停止 */
+  if (token) {
+    next()
+  } else {
+    next('/login')
+    NProgress.done()
+  }
 })
 
 /*
