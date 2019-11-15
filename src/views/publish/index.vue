@@ -1,5 +1,5 @@
 <template>
-  <div class="Home">我是首页</div>
+  <div class="publish">我是发布</div>
 </template>
 
 <script>

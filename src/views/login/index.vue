@@ -7,7 +7,12 @@
         <img src="../../assets/img/logo_index.png" alt="">
       </div>
       <!--表单组件-->
-      <el-form style="margin-top: 25px" :rules="loginrules" ref="ruleForm" :model="ruleform">
+      <el-form
+          style="margin-top: 25px"
+          :rules="loginrules"
+          ref="ruleForm"
+          :model="ruleform"
+      >
         <!--输入手机号-->
         <el-form-item prop="mobile">
           <el-input v-model="ruleform.mobile" placeholder="请输入手机号"></el-input>
