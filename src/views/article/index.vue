@@ -44,7 +44,9 @@
       </div>
       <el-table
           :data="tableData"
-          style="width: 100%">
+          style="width: 100%"
+          v-loading="loading"
+      >
         <el-table-column
             prop="data"
             label="封面"
@@ -97,6 +99,7 @@
           :total="total_count"
           style='margin-left:250px'
           @current-change='onPageChange'
+          :disabled="loading"
       >
       </el-pagination>
     </el-card>
@@ -117,6 +120,7 @@ export default {
       total_count: '',
       // 存放文章列表信息；
       tableData: [],
+      loading: true,
       // 状态信息
       articleStatus: [
         {
@@ -149,10 +153,12 @@ export default {
   methods: {
     // 数据分页；page=1 为默认值，es6的语法
     loadArticles (page = 1) {
+      // 页面一加载就开启
+      this.loading = true
       /**
-      * 发送axios请求来获取列表数据
-      * 因为获取数据需要访问服务器上的资源，所以需要验证token的值
-      */
+       * 发送axios请求来获取列表数据
+       * 因为获取数据需要访问服务器上的资源，所以需要验证token的值
+       */
       // 获取token；
       const GetToken = window.localStorage.getItem('login_token')
 
@@ -161,7 +167,7 @@ export default {
         // 设置请求头；除了登录接口不需要外，其他的都要设置请求头
         headers: {
           // 格式要求；
-          Authorization: ` Bearer ${GetToken}`
+          Authorization: `Bearer ${GetToken}`
         },
         // 设置请求类型；
         method: 'GET',
@@ -176,6 +182,8 @@ export default {
         console.log(res)
         // 判断；
         if (res.status === 200) {
+          // 响应接收完成则关闭
+          this.loading = false
           // 把获取到的列表信息保存到数组中；
           this.tableData = res.data.data.results
           // 把获取到的总文章数从新赋值
@@ -183,6 +191,9 @@ export default {
         }
       }).catch(() => {
         console.log('获取数据失败')
+      }).finally(() => {
+        // 无论成功还是失败都会执行
+        this.loading = false
       })
     },
     // 组件提供的点击事件，回调函数的结果为当前页
