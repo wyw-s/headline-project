@@ -45,27 +45,35 @@
           :data="tableData"
           style="width: 100%">
         <el-table-column
-            prop="date"
+            prop="data"
             label="封面"
             width="180">
+          <template slot-scope="scope">
+            <img width='50' :src="scope.row.cover.images[0]">
+          </template>
         </el-table-column>
         <el-table-column
-            prop="name"
+            prop="title"
             label="标题"
             width="180">
         </el-table-column>
         <el-table-column
-            prop="address"
+            prop="status"
             label="状态">
         </el-table-column>
         <el-table-column
-            prop="address"
+            prop="pubdate"
             label="发布日期"
         ></el-table-column>
         <el-table-column
             prop="address"
             label="操作"
-        ></el-table-column>
+        >
+          <template>
+            <el-button type="danger">删除</el-button>
+            <el-button type="primary">编辑</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-card>
   </div>
@@ -81,33 +89,42 @@ export default {
         region_id: '',
         value1: ''
       },
-      tableData: [
-        {
-          date: '2019-05-02',
-          name: '王小虎',
-          address: '北京市顺义区金沙路99号'
+      // 存放文章列表信息；
+      tableData: []
+    }
+  },
+  created () {
+    this.loadArticles()
+  },
+  methods: {
+    loadArticles () {
+      /*
+      * 发送axios请求来获取列表数据
+      * 因为获取数据需要访问服务器上的资源，所以需要验证token的值 */
+      // 获取token；
+      const GetToken = window.localStorage.getItem('login_token')
+
+      // 发送axios请求；
+      this.$axios({
+        // 设置请求头；除了登录接口不需要外，其他的都要设置请求头
+        headers: {
+          // 格式要求；
+          Authorization: ` Bearer ${GetToken}`
         },
-        {
-          date: '2019-05-02',
-          name: '王小虎',
-          address: '北京市顺义区金沙路99号'
-        },
-        {
-          date: '2019-05-02',
-          name: '王小虎',
-          address: '北京市顺义区金沙路99号'
-        },
-        {
-          date: '2019-05-02',
-          name: '王小虎',
-          address: '北京市顺义区金沙路99号'
-        },
-        {
-          date: '2019-05-02',
-          name: '王小虎',
-          address: '北京市顺义区金沙路99号'
+        // 设置请求类型；
+        method: 'GET',
+        // 设置请求地址；
+        url: '/articles'
+        // 设置请求参数: 无；
+        // 接收响应结果
+      }).then(res => {
+        console.log(res)
+        // 判断；
+        if (res.status === 200) {
+          // 把获取到的列表信息保存到数组中；
+          this.tableData = res.data.data.results
         }
-      ]
+      })
     }
   }
 }
