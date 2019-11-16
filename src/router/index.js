@@ -86,6 +86,9 @@ router.beforeEach((to, from, next) => {
   if (token) {
     next()
   } else {
+    /*
+    * 原因分析：判断不成立时执行以下代码，跳转页面，然后会再次判断，由此类推便形成了
+    * 死循环，所以后面的代码不执行 */
     next('/login')
     NProgress.done()
   }
