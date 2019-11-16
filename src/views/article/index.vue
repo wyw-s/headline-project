@@ -39,7 +39,8 @@
     </el-card>
     <el-card style="margin-top: 10px">
       <div slot='header'>
-        <span>共找到60028条符合条件的内容</span>
+        <!--插值表达式-->
+        <span>共找到{{total_count}}条符合条件的内容</span>
       </div>
       <el-table
           :data="tableData"
@@ -48,6 +49,7 @@
             prop="data"
             label="封面"
             width="180">
+          <!--自定义列表数据-->
           <template slot-scope="scope">
             <img width='50' :src="scope.row.cover.images[0]">
           </template>
@@ -60,6 +62,18 @@
         <el-table-column
             prop="status"
             label="状态">
+          <!--
+            slot-scope="scope" 可以自定义表格
+            scope：代表每一项
+            scope.row.status==>代表类型：0、1、2、3、4
+          -->
+          <template slot-scope="scope">
+            <el-tag
+                :type='articleStatus[scope.row.status].type'>
+              <!--要显示的文本内容-->
+              {{ articleStatus[scope.row.status].label }}
+            </el-tag>
+          </template>
         </el-table-column>
         <el-table-column
             prop="pubdate"
@@ -69,12 +83,22 @@
             prop="address"
             label="操作"
         >
+          <!--自定义列表数据-->
           <template>
-            <el-button type="danger">删除</el-button>
-            <el-button type="primary">编辑</el-button>
+            <el-button type="danger" size='mini'>删除</el-button>
+            <el-button type="primary" size='mini'>编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <!--分页组件-->
+      <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="total_count"
+          style='margin-left:250px'
+          @current-change='onPageChange'
+      >
+      </el-pagination>
     </el-card>
   </div>
 </template>
@@ -89,18 +113,46 @@ export default {
         region_id: '',
         value1: ''
       },
+      // 记录文章总数量
+      total_count: '',
       // 存放文章列表信息；
-      tableData: []
+      tableData: [],
+      // 状态信息
+      articleStatus: [
+        {
+          type: '',
+          label: '草稿'
+        },
+        {
+          type: 'warning',
+          label: '待审核'
+        },
+        {
+          type: 'success',
+          label: '审核通过'
+        },
+        {
+          type: 'danger',
+          label: '审核失败'
+        },
+        {
+          type: 'info',
+          label: '已删除'
+        }
+      ]
     }
   },
   created () {
+    // 页面加载显示列表信息
     this.loadArticles()
   },
   methods: {
-    loadArticles () {
-      /*
+    // 数据分页；page=1 为默认值，es6的语法
+    loadArticles (page = 1) {
+      /**
       * 发送axios请求来获取列表数据
-      * 因为获取数据需要访问服务器上的资源，所以需要验证token的值 */
+      * 因为获取数据需要访问服务器上的资源，所以需要验证token的值
+      */
       // 获取token；
       const GetToken = window.localStorage.getItem('login_token')
 
@@ -114,8 +166,11 @@ export default {
         // 设置请求类型；
         method: 'GET',
         // 设置请求地址；
-        url: '/articles'
+        url: '/articles',
         // 设置请求参数: 无；
+        params: {
+          page
+        }
         // 接收响应结果
       }).then(res => {
         console.log(res)
@@ -123,8 +178,17 @@ export default {
         if (res.status === 200) {
           // 把获取到的列表信息保存到数组中；
           this.tableData = res.data.data.results
+          // 把获取到的总文章数从新赋值
+          this.total_count = res.data.data.total_count
         }
+      }).catch(() => {
+        console.log('获取数据失败')
       })
+    },
+    // 组件提供的点击事件，回调函数的结果为当前页
+    onPageChange (page) {
+      // 把得到的当前页的数据作为实参传入，加载函数；进而刷新页面
+      this.loadArticles(page)
     }
   }
 }
