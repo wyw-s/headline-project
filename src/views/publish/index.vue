@@ -8,7 +8,12 @@
         <el-input placeholder='文章名称' v-model="article.title"></el-input>
       </el-form-item>
       <el-form-item label="内容">
-        <el-input type="textarea" v-model="article.content"></el-input>
+        <!--<el-input type="textarea" v-model="article.content"></el-input>-->
+        <quill-editor
+            :options="editorOption"
+            ref="myQuillEditor"
+            v-model="article.content">
+        </quill-editor>
       </el-form-item>
       <!--<el-form-item label="封面">-->
       <!--  <el-radio-group v-model="form.resource">-->
@@ -39,8 +44,19 @@
 </template>
 
 <script>
+// 引入样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+// 引入富文本编辑器
+import { quillEditor } from 'vue-quill-editor'
+
 export default {
   name: 'Publish',
+  components: {
+    // eslint-disable-next-line vue/no-unused-components
+    quillEditor
+  },
   data () {
     return {
       article: {
@@ -52,6 +68,7 @@ export default {
         },
         channel_id: '' // 文章id
       },
+      editorOption: {}, // 富文本编辑器的配置选项对象
       // 存放频道，循环遍历到页面上；
       channels: []
     }
@@ -69,9 +86,9 @@ export default {
         // 设置请求地址；
         url: '/articles',
         // 设置请求头并携带 token 数据；
-        headers: {
-          Authorization: `Bearer ${window.localStorage.getItem('login_token')}`
-        },
+        // headers: {
+        //   Authorization: `Bearer ${window.localStorage.getItem('login_token')}`
+        // },
         // 设置请求参数;
         params: {
           draft

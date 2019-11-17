@@ -184,15 +184,15 @@ export default {
        * 因为获取数据需要访问服务器上的资源，所以需要验证token的值
        */
       // 获取token；
-      const GetToken = window.localStorage.getItem('login_token')
+      // const GetToken = window.localStorage.getItem('login_token')
 
       // 发送axios请求；
       this.$axios({
         // 设置请求头；除了登录接口不需要外，其他的都要设置请求头
-        headers: {
-          // 格式要求；
-          Authorization: `Bearer ${GetToken}`
-        },
+        // headers: {
+        //   // 格式要求；
+        //   Authorization: `Bearer ${GetToken}`
+        // },
         // 设置请求类型；
         method: 'GET',
         // 设置请求地址；
@@ -267,13 +267,13 @@ export default {
       * 获取到的id 的值 超出了js 本身所能处理的最大数，导致失去了精度
       */
       // 从本地获取token;
-      const Gettoken = window.localStorage.getItem('login_token')
+      // const Gettoken = window.localStorage.getItem('login_token')
       // 发送axios请求；
       this.$axios({
         // 设置请求头，携带token；
-        headers: {
-          Authorization: `Bearer ${Gettoken}`
-        },
+        // headers: {
+        //   Authorization: `Bearer ${Gettoken}`
+        // },
         // 设置请求方式；
         method: 'DELETE',
         // 设置请求地址及路径参数；
