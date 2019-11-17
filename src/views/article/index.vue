@@ -16,12 +16,16 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表">
-          <el-select v-model='filterForm.region_id' placeholder="请选择">
-            <el-option label="大前端" value="shanghai"></el-option>
-            <el-option label="css" value="beijing"></el-option>
-            <el-option label="html" value="beijing"></el-option>
-            <el-option label="js" value="beijing"></el-option>
-            <el-option label="干掉java" value="beijing"></el-option>
+          <el-select v-model='filterForm.region_id' placeholder="请选择频道">
+            <!--option 会把下拉列表的value值，同步到region_id数据中-->
+            <!--默认选中所有频道-->
+            <el-option label="所有频道" :value='null'></el-option>
+            <el-option
+                :label="item.name"
+                :value="item.id"
+                v-for="item in channels"
+                :key="item.id"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label='时间选择'>
@@ -37,7 +41,8 @@
           <el-button
               type="primary"
               @click="onloadArticles"
-          >查询</el-button>
+          >查询
+          </el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -117,16 +122,23 @@ export default {
   data () {
     return {
       filterForm: {
-        // axios 不会发送值为 null、undefined 类型的参数。
+        // axios 不会发送值为 null、undefined 类型的参数。！！！
         resource: null,
-        region_id: '',
+        // 当此数据为null时，axios则会默认获取全部类型
+        region_id: null,
         value1: ''
       },
       // 记录文章总数量,初始化的数据要设为0，不然上面的数据在计算分页时会报错；
       total_count: 0,
       // 存放文章列表信息；
       tableData: [],
+      // loading 加载
       loading: true,
+      /**
+       * 存放获取到的频道列表信息;
+       * 把数据循环遍历渲染到页面上
+       */
+      channels: [],
       // 状态信息
       articleStatus: [
         {
@@ -153,8 +165,10 @@ export default {
     }
   },
   created () {
-    // 页面加载显示列表信息
+    // 页面加载显示列表信息；
     this.loadArticles()
+    // 页面加载就显示频道信息；
+    this.loadChannels()
   },
   methods: {
     // 数据分页；page=1 为默认值，es6的语法
@@ -183,11 +197,14 @@ export default {
         params: {
           page,
           // 查询指定状态的数据，若值为null 那么axios会忽略此参数；
-          status: this.filterForm.resource
+          // 根据状态文章的状态来筛选数据
+          status: this.filterForm.resource,
+          // 根据文章的类型来筛选数据
+          channel_id: this.filterForm.region_id
         }
         // 接收响应结果
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         // 判断；
         if (res.status === 200) {
           // 响应接收完成则关闭
@@ -213,6 +230,22 @@ export default {
     onloadArticles () {
       // 点击查询调用查询的方法
       this.loadArticles()
+    },
+    // 用于获取频道列表
+    loadChannels () {
+      // 发送axios请求；
+      this.$axios({
+        // 设置请求方式；
+        method: 'GET',
+        // 设置请求地址；
+        url: '/channels'
+      }).then(res => {
+        // console.log(res)
+        // 判断成立则把获取到的数据保存到数组中；
+        this.channels = res.data.data.channels
+      }).catch(() => {
+        console.log('获取数据失败')
+      })
     }
   }
 }
