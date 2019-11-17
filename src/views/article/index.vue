@@ -29,11 +29,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label='时间选择'>
+          <!--使用format指定输入框的格式；使用value-format指定绑定值的格式。-->
           <el-date-picker
               v-model="filterForm.value1"
               type="datetimerange"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
+              format="yyyy 年 MM 月 dd 日"
+              value-format="yyyy-MM-dd"
           >
           </el-date-picker>
         </el-form-item>
@@ -126,6 +129,7 @@ export default {
         resource: null,
         // 当此数据为null时，axios则会默认获取全部类型
         region_id: null,
+        // 存放日期
         value1: ''
       },
       // 记录文章总数量,初始化的数据要设为0，不然上面的数据在计算分页时会报错；
@@ -200,7 +204,16 @@ export default {
           // 根据状态文章的状态来筛选数据
           status: this.filterForm.resource,
           // 根据文章的类型来筛选数据
-          channel_id: this.filterForm.region_id
+          channel_id: this.filterForm.region_id,
+          /*
+          * 初始加载页面时，值为空字符串，获取到的值为undefined,axios 对undefined 会忽略，
+          * 但是日期组件自带的有清空日期的功能，
+          * 当用户手动清除日期的时候，数据被重置为 null 了，
+          * 如果数据为  null，那你 `null[下标]` 就报错了，
+          * 所以这里要手动校验一下。此时 valuel的值为null ，所以获取索引会报错
+          */
+          begin_pubdate: this.filterForm.value1 ? this.filterForm.value1[0] : null,
+          end_pubdate: this.filterForm.value1 ? this.filterForm.value1[1] : null
         }
         // 接收响应结果
       }).then(res => {
