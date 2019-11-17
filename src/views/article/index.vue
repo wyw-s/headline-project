@@ -16,34 +16,34 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表">
-          <el-select v-model='filterForm.region_id' placeholder="请选择频道">
+          <el-select placeholder="请选择频道" v-model='filterForm.region_id'>
             <!--option 会把下拉列表的value值，同步到region_id数据中-->
             <!--默认选中所有频道-->
-            <el-option label="所有频道" :value='null'></el-option>
+            <el-option :value='null' label="所有频道"></el-option>
             <el-option
+                :key="item.id"
                 :label="item.name"
                 :value="item.id"
                 v-for="item in channels"
-                :key="item.id"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label='时间选择'>
           <!--使用format指定输入框的格式；使用value-format指定绑定值的格式。-->
           <el-date-picker
-              v-model="filterForm.value1"
-              type="datetimerange"
-              start-placeholder="开始日期"
               end-placeholder="结束日期"
               format="yyyy 年 MM 月 dd 日"
+              start-placeholder="开始日期"
+              type="datetimerange"
+              v-model="filterForm.value1"
               value-format="yyyy-MM-dd"
           >
           </el-date-picker>
         </el-form-item>
         <el-form-item style='margin-left: 68px'>
           <el-button
-              type="primary"
               @click="onloadArticles"
+              type="primary"
           >查询
           </el-button>
         </el-form-item>
@@ -60,22 +60,22 @@
           v-loading="loading"
       >
         <el-table-column
-            prop="data"
             label="封面"
+            prop="data"
             width="180">
           <!--自定义列表数据-->
           <template slot-scope="scope">
-            <img width='50' :src="scope.row.cover.images[0]">
+            <img :src="scope.row.cover.images[0]" width='50'>
           </template>
         </el-table-column>
         <el-table-column
-            prop="title"
             label="标题"
+            prop="title"
             width="180">
         </el-table-column>
         <el-table-column
-            prop="status"
-            label="状态">
+            label="状态"
+            prop="status">
           <!--
             slot-scope="scope" 可以自定义表格
             scope：代表每一项
@@ -90,28 +90,28 @@
           </template>
         </el-table-column>
         <el-table-column
-            prop="pubdate"
             label="发布日期"
+            prop="pubdate"
         ></el-table-column>
         <el-table-column
-            prop="address"
             label="操作"
+            prop="address"
         >
           <!--自定义列表数据-->
-          <template>
-            <el-button type="danger" size='mini'>删除</el-button>
-            <el-button type="primary" size='mini'>编辑</el-button>
+          <template slot-scope="scope">
+            <el-button @click="onDelete(scope.row.id)" size='mini' type="danger">删除</el-button>
+            <el-button size='mini' type="primary">编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
       <!--分页组件-->
       <el-pagination
+          :disabled="loading"
+          :total="total_count"
+          @current-change='onPageChange'
           background
           layout="prev, pager, next"
-          :total="total_count"
           style='margin-left:250px'
-          @current-change='onPageChange'
-          :disabled="loading"
       >
       </el-pagination>
     </el-card>
@@ -258,6 +258,32 @@ export default {
         this.channels = res.data.data.channels
       }).catch(() => {
         console.log('获取数据失败')
+      })
+    },
+    // 给删除按钮注册点击事件；
+    onDelete (id) {
+      /*
+      * 这里会报400的错误，原因是 传入的参数 id 的问题，
+      * 获取到的id 的值 超出了js 本身所能处理的最大数，导致失去了精度
+      */
+      // 从本地获取token;
+      const Gettoken = window.localStorage.getItem('login_token')
+      // 发送axios请求；
+      this.$axios({
+        // 设置请求头，携带token；
+        headers: {
+          Authorization: `Bearer ${Gettoken}`
+        },
+        // 设置请求方式；
+        method: 'DELETE',
+        // 设置请求地址及路径参数；
+        url: `/articles/${id}`
+      }).then(() => {
+        // 删除成功则从新加载页面；
+        this.loadArticles()
+        console.log('删除成功')
+      }).catch(() => {
+        console.log('删除失败')
       })
     }
   }
