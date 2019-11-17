@@ -6,7 +6,7 @@ import VueRouter from 'vue-router'
 // 引入登录页文件
 import login from '@/views/login'
 // 引入主页布局文件；
-import layout from '@/views/layout'
+import layout from '../views/layout'
 // 引入内容区域模块；
 import Home from '@/views/Home'
 // 引入文章模块；

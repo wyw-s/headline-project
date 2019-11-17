@@ -1,21 +1,22 @@
 <template>
   <div>
-    <el-card class="article">
+    <el-card>
       <div slot='header'>
         <span>全部图文</span>
       </div>
-      <el-form :model='articleform'>
+      <el-form :model='filterForm'>
         <el-form-item label='文章状态:'>
-          <el-radio-group v-model='articleform.resource'>
-            <el-radio label='全部'></el-radio>
-            <el-radio label='草稿'></el-radio>
-            <el-radio label='待审核'></el-radio>
-            <el-radio label='审核通过'></el-radio>
-            <el-radio label='审核失败'></el-radio>
+          <el-radio-group v-model='filterForm.resource'>
+            <el-radio :label='null'>全部</el-radio>
+            <el-radio label='0'>草稿</el-radio>
+            <el-radio label='1'>待审核</el-radio>
+            <el-radio label='2'>审核通过</el-radio>
+            <el-radio label='3'>审核失败</el-radio>
+            <el-radio label='4'>已删除</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表">
-          <el-select v-model='articleform.region_id' placeholder="请选择">
+          <el-select v-model='filterForm.region_id' placeholder="请选择">
             <el-option label="大前端" value="shanghai"></el-option>
             <el-option label="css" value="beijing"></el-option>
             <el-option label="html" value="beijing"></el-option>
@@ -25,7 +26,7 @@
         </el-form-item>
         <el-form-item label='时间选择'>
           <el-date-picker
-              v-model="articleform.value1"
+              v-model="filterForm.value1"
               type="datetimerange"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
@@ -33,7 +34,10 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item style='margin-left: 68px'>
-          <el-button type="primary">查询</el-button>
+          <el-button
+              type="primary"
+              @click="onloadArticles"
+          >查询</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -108,16 +112,18 @@
 
 <script>
 export default {
-  name: 'index',
+  // 不要使用保留字或保留的html组件做为组件的id
+  name: 'Article',
   data () {
     return {
-      articleform: {
-        resource: '',
+      filterForm: {
+        // axios 不会发送值为 null、undefined 类型的参数。
+        resource: null,
         region_id: '',
         value1: ''
       },
-      // 记录文章总数量
-      total_count: '',
+      // 记录文章总数量,初始化的数据要设为0，不然上面的数据在计算分页时会报错；
+      total_count: 0,
       // 存放文章列表信息；
       tableData: [],
       loading: true,
@@ -175,7 +181,9 @@ export default {
         url: '/articles',
         // 设置请求参数: 无；
         params: {
-          page
+          page,
+          // 查询指定状态的数据，若值为null 那么axios会忽略此参数；
+          status: this.filterForm.resource
         }
         // 接收响应结果
       }).then(res => {
@@ -200,6 +208,11 @@ export default {
     onPageChange (page) {
       // 把得到的当前页的数据作为实参传入，加载函数；进而刷新页面
       this.loadArticles(page)
+    },
+    // 注册点击查询事件；
+    onloadArticles () {
+      // 点击查询调用查询的方法
+      this.loadArticles()
     }
   }
 }

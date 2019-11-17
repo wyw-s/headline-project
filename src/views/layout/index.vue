@@ -62,6 +62,7 @@
 import layoutHeader from '../../components/layout-header.vue'
 
 export default {
+  name: 'layout',
   // 注册组件；
   components: {
     'layout-hearder': layoutHeader
