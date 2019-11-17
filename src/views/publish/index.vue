@@ -22,10 +22,12 @@
           <el-select v-model="article.channel_id" placeholder="请选择">
             <!--option 会把下拉列表的value值，同步到region_id数据中-->
             <!--默认选中所有频道-->
-            <el-option label="哈哈" value="css"></el-option>
-            <el-option label="哈哈" value="css">1</el-option>
-            <el-option label="哈哈" value="css">2</el-option>
-            <el-option label="哈哈" value="css">3</el-option>
+            <el-option
+                v-for="item in channels"
+                :label="item.name"
+                :value="item.id"
+                :key="item.id"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -42,15 +44,38 @@ export default {
   data () {
     return {
       article: {
-        title: '',
-        content: '',
-        channel_id: ''
-      }
+        title: '', // 文本内容
+        content: '', // 文章名称
+        channel_id: '' // 文章id
+      },
+      // 存放频道，循环遍历到页面上；
+      channels: []
     }
+  },
+  created () {
+    // 页面加载，就需要把频道信息显示出来
+    this.loadChannels()
   },
   methods: {
     onSubmit () {
       console.log('submit!')
+    },
+    // 用于获取频道列表
+    loadChannels () {
+      // 这里不需要 token
+      // 发送axios请求；
+      this.$axios({
+        // 设置请求方式；
+        method: 'GET',
+        // 设置请求地址；
+        url: '/channels'
+      }).then(res => {
+        // console.log(res)
+        // 判断成立则把获取到的数据保存到数组中；
+        this.channels = res.data.data.channels
+      }).catch(() => {
+        console.log('获取数据失败')
+      })
     }
   }
 }
