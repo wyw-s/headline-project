@@ -40,6 +40,10 @@ const routes = [
         // 发布模块；
         path: '/publish',
         component: Publish
+      },
+      {
+        path: '/publish/:articleId',
+        component: Publish
       }
     ]
   },

@@ -59,9 +59,19 @@ function (error) {
   // Do something with request error
   return Promise.reject(error)
 })
-
+// axios 响应拦截器
+axios.interceptors.response.use(function (config) {
+  console.log('响应拦截器', config)
+  // return config 是通行的规则
+  return config
+},
+function (error) {
+  console.log(error)
+  // Do something with request error
+  return Promise.reject(error)
+})
 // 把axios赋值给全局对象；
-Vue.prototype.$axios = axios // 将axios共享出去；
+Vue.prototype.$axios = axios// 将axios共享出去；
 // 注册全局 element-ui
 Vue.use(ElementUI)
 Vue.config.productionTip = false

@@ -16,17 +16,19 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道列表">
-          <el-select placeholder="请选择频道" v-model='filterForm.region_id'>
-            <!--option 会把下拉列表的value值，同步到region_id数据中-->
-            <!--默认选中所有频道-->
-            <el-option :value='null' label="所有频道"></el-option>
-            <el-option
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-                v-for="item in channels"
-            ></el-option>
-          </el-select>
+          <!--使用组件-->
+          <channel-select v-model="filterForm.region_id"></channel-select>
+          <!--<el-select placeholder="请选择频道" v-model='filterForm.region_id'>-->
+          <!--  &lt;!&ndash;option 会把下拉列表的value值，同步到region_id数据中&ndash;&gt;-->
+          <!--  &lt;!&ndash;默认选中所有频道&ndash;&gt;-->
+          <!--  <el-option :value='null' label="所有频道"></el-option>-->
+          <!--  <el-option-->
+          <!--      :key="item.id"-->
+          <!--      :label="item.name"-->
+          <!--      :value="item.id"-->
+          <!--      v-for="item in channels"-->
+          <!--  ></el-option>-->
+          <!--</el-select>-->
         </el-form-item>
         <el-form-item label='时间选择'>
           <!--使用format指定输入框的格式；使用value-format指定绑定值的格式。-->
@@ -100,7 +102,11 @@
           <!--自定义列表数据-->
           <template slot-scope="scope">
             <el-button @click="onDelete(scope.row.id)" size='mini' type="danger">删除</el-button>
-            <el-button size='mini' type="primary">编辑</el-button>
+            <el-button
+                size='mini'
+                type="primary"
+                @click="$router.push('/publish/'+scope.row.id)"
+            >编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -119,9 +125,12 @@
 </template>
 
 <script>
+import ChannelSelect from '../../components/channel-select/index'
 export default {
   // 不要使用保留字或保留的html组件做为组件的id
   name: 'Article',
+  components: { ChannelSelect },
+  // 注册组件；
   data () {
     return {
       filterForm: {
@@ -142,7 +151,7 @@ export default {
        * 存放获取到的频道列表信息;
        * 把数据循环遍历渲染到页面上
        */
-      channels: [],
+      // channels: [],
       // 状态信息
       articleStatus: [
         {
@@ -172,7 +181,7 @@ export default {
     // 页面加载显示列表信息；
     this.loadArticles()
     // 页面加载就显示频道信息；
-    this.loadChannels()
+    // this.loadChannels()
   },
   methods: {
     // 数据分页；page=1 为默认值，es6的语法
@@ -204,7 +213,7 @@ export default {
           // 根据状态文章的状态来筛选数据
           status: this.filterForm.resource,
           // 根据文章的类型来筛选数据
-          channel_id: this.filterForm.region_id,
+          // channel_id: this.filterForm.region_id,
           /*
           * 初始加载页面时，值为空字符串，获取到的值为undefined,axios 对undefined 会忽略，
           * 但是日期组件自带的有清空日期的功能，
@@ -245,21 +254,21 @@ export default {
       this.loadArticles()
     },
     // 用于获取频道列表
-    loadChannels () {
-      // 发送axios请求；
-      this.$axios({
-        // 设置请求方式；
-        method: 'GET',
-        // 设置请求地址；
-        url: '/channels'
-      }).then(res => {
-        // console.log(res)
-        // 判断成立则把获取到的数据保存到数组中；
-        this.channels = res.data.data.channels
-      }).catch(() => {
-        console.log('获取数据失败')
-      })
-    },
+    // loadChannels () {
+    //   // 发送axios请求；
+    //   this.$axios({
+    //     // 设置请求方式；
+    //     method: 'GET',
+    //     // 设置请求地址；
+    //     url: '/channels'
+    //   }).then(res => {
+    //     // console.log(res)
+    //     // 判断成立则把获取到的数据保存到数组中；
+    //     this.channels = res.data.data.channels
+    //   }).catch(() => {
+    //     console.log('获取数据失败')
+    //   })
+    // },
     // 给删除按钮注册点击事件；
     onDelete (id) {
       /*

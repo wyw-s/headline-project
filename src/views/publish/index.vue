@@ -7,12 +7,14 @@
       <el-form-item label="标题">
         <el-input placeholder='文章名称' v-model="article.title"></el-input>
       </el-form-item>
-      <el-form-item label="内容">
+      <el-form-item label="内容"  style="height: 300px">
         <!--<el-input type="textarea" v-model="article.content"></el-input>-->
         <quill-editor
             :options="editorOption"
             ref="myQuillEditor"
-            v-model="article.content">
+            v-model="article.content"
+            style="height: 200px"
+        >
         </quill-editor>
       </el-form-item>
       <!--<el-form-item label="封面">-->
@@ -24,26 +26,29 @@
       <!--  </el-radio-group>-->
       <!--</el-form-item>-->
       <el-form-item label="频道">
-        <el-select placeholder="请选择" v-model="article.channel_id">
-          <!--option 会把下拉列表的value值，同步到region_id数据中-->
-          <!--默认选中所有频道-->
-          <el-option
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-              v-for="item in channels"
-          ></el-option>
-        </el-select>
+        <!--使用组件-->
+        <channel-select v-model="article.channel_id"></channel-select>
+        <!--<el-select placeholder="请选择" v-model="article.channel_id">-->
+        <!--  &lt;!&ndash;option 会把下拉列表的value值，同步到region_id数据中&ndash;&gt;-->
+        <!--  &lt;!&ndash;默认选中所有频道&ndash;&gt;-->
+        <!--  <el-option-->
+        <!--      :key="item.id"-->
+        <!--      :label="item.name"-->
+        <!--      :value="item.id"-->
+        <!--      v-for="item in channels"-->
+        <!--  ></el-option>-->
+        <!--</el-select>-->
       </el-form-item>
       <el-form-item>
         <el-button @click="onSubmit(false)" type="primary">发表</el-button>
-        <el-button>存入草稿</el-button>
+        <el-button @click="onSubmit(true)">存入草稿</el-button>
       </el-form-item>
     </el-form>
   </el-card>
 </template>
 
 <script>
+import ChannelSelect from '../../components/channel-select/index'
 // 引入样式
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -55,7 +60,8 @@ export default {
   name: 'Publish',
   components: {
     // eslint-disable-next-line vue/no-unused-components
-    quillEditor
+    quillEditor,
+    ChannelSelect
   },
   data () {
     return {
@@ -66,7 +72,7 @@ export default {
           type: 0, // 封面类型 -1:自动，0-无图，1-1张，3-3张
           images: []
         },
-        channel_id: '' // 文章id
+        channel_id: null // 文章id
       },
       editorOption: {}, // 富文本编辑器的配置选项对象
       // 存放频道，循环遍历到页面上；
@@ -75,7 +81,7 @@ export default {
   },
   created () {
     // 页面加载，就需要把频道信息显示出来
-    this.loadChannels()
+    // this.loadChannels()
   },
   methods: {
     onSubmit (draft) {
@@ -99,24 +105,24 @@ export default {
       }).catch(() => {
         console.log('保存失败')
       })
-    },
-    // 用于获取频道列表
-    loadChannels () {
-      // 这里不需要 token
-      // 发送axios请求；
-      this.$axios({
-        // 设置请求方式；
-        method: 'GET',
-        // 设置请求地址；
-        url: '/channels'
-      }).then(res => {
-        // console.log(res)
-        // 判断成立则把获取到的数据保存到数组中；
-        this.channels = res.data.data.channels
-      }).catch(() => {
-        console.log('获取数据失败')
-      })
     }
+    // 用于获取频道列表
+    // loadChannels () {
+    //   // 这里不需要 token
+    //   // 发送axios请求；
+    //   this.$axios({
+    //     // 设置请求方式；
+    //     method: 'GET',
+    //     // 设置请求地址；
+    //     url: '/channels'
+    //   }).then(res => {
+    //     // console.log(res)
+    //     // 判断成立则把获取到的数据保存到数组中；
+    //     this.channels = res.data.data.channels
+    //   }).catch(() => {
+    //     console.log('获取数据失败')
+    //   })
+    // }
   }
 }
 </script>
