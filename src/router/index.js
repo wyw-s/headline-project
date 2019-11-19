@@ -15,6 +15,8 @@ import Article from '@/views/article'
 import Publish from '@/views/publish'
 // 引入nprogress文件；
 import NProgress from 'nprogress'
+// 引入评论列表组件；
+import comment from '@/views/comment'
 // 引入注册全局路由；
 Vue.use(VueRouter)
 
@@ -44,6 +46,11 @@ const routes = [
       {
         path: '/publish/:articleId',
         component: Publish
+      },
+      // 评论列表组件；
+      {
+        path: '/comment/list',
+        component: comment
       }
     ]
   },
