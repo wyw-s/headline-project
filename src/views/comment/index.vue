@@ -41,10 +41,11 @@
         <el-table-column
             label="操作"
         >
-          <template>
+          <template slot-scope="scope">
             <el-button
                 size="mini"
                 type="primary"
+                @click="$router.push('/comment/'+scope.row.id)"
             >修改
             </el-button>
           </template>
@@ -74,7 +75,6 @@ export default {
       page: null,
       forbidden: true,
       loading: true
-      // CurrentPage: 1
     }
   },
   created () {
@@ -140,4 +140,4 @@ export default {
 </script>
 
 <style scoped>
-<
+</style>
