@@ -1,7 +1,6 @@
 <template>
   <el-select
       placeholder="请选择频道"
-      v-model='value'
       :value='value'
       @input="onInput"
   >
@@ -19,12 +18,14 @@
 <script>
 export default {
   name: 'channel-select',
+  props: {
+    value: {
+      type: [String, Number],
+      require: true
+    }
+  },
   data () {
     return {
-      value: {
-        type: [String, Number],
-        require: true
-      },
       /**
        * 存放获取到的频道列表信息;
        * 把数据循环遍历渲染到页面上

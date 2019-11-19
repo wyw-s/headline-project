@@ -137,7 +137,7 @@ export default {
         // axios 不会发送值为 null、undefined 类型的参数。！！！
         resource: null,
         // 当此数据为null时，axios则会默认获取全部类型
-        region_id: null,
+        region_id: '',
         // 存放日期
         value1: ''
       },

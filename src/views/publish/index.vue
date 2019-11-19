@@ -82,28 +82,99 @@ export default {
   created () {
     // 页面加载，就需要把频道信息显示出来
     // this.loadChannels()
+    /*
+    * 因为编辑和发表共用一个组件，而只有编辑的时候会携带id值，所以用
+    * id做判断；
+    * */
+    if (this.$route.params.articleId) {
+      // 判断成功则调用方法
+      this.loadArticles()
+    }
   },
   methods: {
-    onSubmit (draft) {
-      // 发送axios请求；
+    // 用于获取同步编辑的表单内容
+    loadArticles () {
       this.$axios({
-        // 设置请求方式；
+        method: 'GET',
+        url: `/articles/${this.$route.params.articleId}`
+      }).then(res => {
+        this.article = res.data.data
+        console.log(res.data)
+      })
+    },
+    onSubmit (draft) {
+      /*
+      * 由于编辑是共用的一个组件，所以当我们点击发表的时候需要判断
+      * 当前的状态是新发布的还是编辑后的发布
+      * 根据不求对 请求执行不同的逻辑
+      */
+      if (this.$route.params.articleId) {
+        // 请求编辑文章
+        this.updateArticle(draft)
+      } else {
+        // 请求添加文章；
+        this.addArticle(draft)
+      }
+
+      // 发送axios请求；
+      // this.$axios({
+      //   // 设置请求方式；
+      //   method: 'POST',
+      //   // 设置请求地址；
+      //   url: '/articles',
+      //   // 设置请求头并携带 token 数据；
+      //   // headers: {
+      //   //   Authorization: `Bearer ${window.localStorage.getItem('login_token')}`
+      //   // },
+      //   // 设置请求参数;
+      //   params: {
+      //     draft
+      //   },
+      //   data: this.article
+      // }).then(() => {
+      //   console.log('发表成功')
+      // }).catch(() => {
+      //   console.log('保存失败')
+      // })
+    },
+    // 封装添加文章的方法，当判断成立不成立时调用
+    addArticle (draft) {
+      this.$axios({
         method: 'POST',
-        // 设置请求地址；
         url: '/articles',
-        // 设置请求头并携带 token 数据；
-        // headers: {
-        //   Authorization: `Bearer ${window.localStorage.getItem('login_token')}`
-        // },
-        // 设置请求参数;
         params: {
           draft
         },
         data: this.article
       }).then(() => {
-        console.log('发表成功')
+        this.$message({
+          type: 'success',
+          message: '发表成功'
+        })
       }).catch(() => {
-        console.log('保存失败')
+        this.$message.error('发表失败')
+      })
+    },
+    // 封装编辑文章的方法，当判断成立成立时调用
+    updateArticle (draft) {
+      this.$axios({
+        // 由接口文档定义
+        method: 'PUT',
+        // 动态路由地址  注意url的大小写！！！！！
+        url: `/articles/${this.$route.params.articleId}`,
+        params: {
+          // 值为 false 或 true
+          draft
+        },
+        data: this.article
+      }).then(() => {
+        // 响应成立则提示
+        this.$message({
+          type: 'success',
+          message: '修改成功'
+        })
+      }).catch(() => {
+        this.$message.error('修改失败')
       })
     }
     // 用于获取频道列表
