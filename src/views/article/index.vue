@@ -117,7 +117,7 @@
           @current-change='onPageChange'
           background
           layout="prev, pager, next"
-          style='margin-left:250px'
+          style='display: flex;justify-content: center;margin-top: 20px'
       >
       </el-pagination>
     </el-card>
