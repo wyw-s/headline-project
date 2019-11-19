@@ -50,7 +50,12 @@
         </el-header>
         <el-main>
           <!--放置二级路由容器-->
-          <router-view></router-view>
+          <!--
+          由于共用的同一个组件，而路由的渲染采用的是复用，而不是销毁在创建
+          ，也就是 缓存；
+          禁用路由缓存 只需要在路由的出口容器上添加有个Key就可以了
+          -->
+          <router-view :key="$route.path"></router-view>
         </el-main>
       </el-container>
     </el-container>
