@@ -18,6 +18,8 @@ import './styles/index.less'
 import axios from 'axios'
 // 引入 json-bigint 文件；
 import JSONbigint from 'json-bigint'
+// 引入时间处理组件
+import moment from 'moment'
 // 设置全局基地址；
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 /*
@@ -75,6 +77,16 @@ Vue.prototype.$axios = axios// 将axios共享出去；
 // 注册全局 element-ui
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+/*
+* 配置全局过滤器：任何组件模板都可以直接访问
+* 参数1：过滤器名称
+* 参数2：函数；
+* 调用方式；在模板中 {{ 数据 | 过滤器 }}
+*  | 管道符前面的数据就会作为传递给过滤器函数 */
+// Format = 'YYYY-MM-DD' 为默认参数
+Vue.filter('dataFormat', (value, Format = 'YYYY-MM-DD') => {
+  return moment(value).format(Format)
+})
 
 new Vue({
   router,
