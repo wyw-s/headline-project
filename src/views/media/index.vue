@@ -32,6 +32,14 @@
         >
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
+          <!--手动点击上传，不用自动上传的组件-->
+          <el-button
+              size="small"
+              type="success"
+              style="float: right; margin-right: 10px"
+              @click="onUpload"
+          >手动点击上传</el-button>
+        <input type="file" hidden ref="file" @change="onFileChange">
       </div>
       <el-row :gutter="10">
         <!--
@@ -148,6 +156,34 @@ export default {
       this.$message({
         type: 'success',
         message: '上传成功'
+      })
+    },
+    onUpload () {
+      // 手动触发DOM的点击事件
+      this.$refs.file.click()
+    },
+    // 手动触发文件的change事件；
+    onFileChange () {
+      // 获取文件对象；
+      const fileobj = this.$refs.file.files[0]
+      // 创建表单对象；
+      const Formobject = new FormData()
+      // 手动添加成员；
+      Formobject.append('image', fileobj)
+      // 开始请求；
+      this.$axios({
+        // 设置请求方式；
+        method: 'POST',
+        // 设置请求地址；
+        url: '/user/images',
+        // 设置请求参数；
+        data: Formobject
+      }).then(() => {
+        // 上传成功，更新数据列表
+        this.getimages(this.radio1 !== '全部')
+        console.log('上传成功')
+      }).catch(() => {
+        console.log('上传失败')
       })
     }
   }
