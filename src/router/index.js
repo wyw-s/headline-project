@@ -21,6 +21,8 @@ import comment from '@/views/comment'
 import CommentDetail from '@/views/comment-detail'
 // 引入素材管理组件
 import media from '../views/media'
+// 引入账户信息组件；
+import account from '../views/account'
 // 引入注册全局路由；
 Vue.use(VueRouter)
 
@@ -67,6 +69,13 @@ const routes = [
       {
         path: '/material/list',
         component: media
+      },
+      /**
+       * 账户信息
+       */
+      {
+        path: '/user/center',
+        component: account
       }
     ]
   },
