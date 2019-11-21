@@ -18,6 +18,20 @@
           <el-radio-button label="全部"></el-radio-button>
           <el-radio-button label="收藏"></el-radio-button>
         </el-radio-group>
+        <!--相关属性根据官方文档查询-->
+        <el-upload
+            style="float: right"
+            :show-file-list='false'
+            class="upload-demo"
+            action="http://ttapi.research.itcast.cn/mp/v1_0/user/images"
+            :headers="UploadHeaders"
+            :on-success="onUploadSuccess"
+            name="image"
+            multiple
+            :limit="3"
+        >
+          <el-button size="small" type="primary">点击上传</el-button>
+        </el-upload>
       </div>
       <el-row :gutter="10">
         <!--
@@ -43,6 +57,7 @@
                       'el-icon-star-on': item.is_collected,
                       'el-icon-star-off': !item.is_collected
                       }"
+                      @click="onCollect(item)"
                   ></i>
                   <i class="el-icon-delete-solid"></i>
               </div>
@@ -53,12 +68,17 @@
   </div>
 </template>
 <script>
+// 设置请求头；
+const token = window.localStorage.getItem('login_token')
 export default {
   name: 'media',
   data () {
     return {
       images: [], // 存放响应的结果信息
-      radio1: '全部' // 值为选中时label的值
+      radio1: '全部', // 值为选中时label的值
+      UploadHeaders: {
+        Authorization: `Bearer ${token}`
+      }
     }
   },
   created () {
@@ -90,6 +110,45 @@ export default {
     onTrigger (trigger) {
       // 括号内会产生一个布尔值，替换掉该函数的默认值
       this.getimages(trigger !== '全部')
+    },
+    onCollect (Collect) {
+      // 开始请求；
+      this.$axios({
+        // 设置请求方式；
+        method: 'PUT',
+        // 设置请求地址；
+        url: `user/images/${Collect.id}`,
+        // 设置请求参数；
+        data: {
+          collect: !Collect.is_collected
+        }
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '操作成功'
+        })
+        // console.log(res)
+        // 更新图标展示；
+        Collect.is_collected = !Collect.is_collected
+      }).catch(() => {
+        // console.log(err)
+        this.$message.error('操作失败')
+      })
+    },
+    /**
+     * 文件上传成功时执行的回调
+     */
+    onUploadSuccess () {
+      // 上传成功后从新加载数据信息
+      /**
+       * 新上传的图片应该处于非收藏状态，如果此时在全部，则点击上传，应该更新全部
+       * 如果在收藏则更新收藏；
+       */
+      this.getimages(this.radio1 !== '全部')
+      this.$message({
+        type: 'success',
+        message: '上传成功'
+      })
     }
   }
 }
