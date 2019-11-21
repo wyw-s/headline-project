@@ -19,6 +19,8 @@ import NProgress from 'nprogress'
 import comment from '@/views/comment'
 // 引入评论详情页组件；
 import CommentDetail from '@/views/comment-detail'
+// 引入素材管理组件
+import media from '../views/media'
 // 引入注册全局路由；
 Vue.use(VueRouter)
 
@@ -58,6 +60,13 @@ const routes = [
       {
         path: '/comment/:articleId',
         component: CommentDetail
+      },
+      /**
+       * 素材管理
+       */
+      {
+        path: '/material/list',
+        component: media
       }
     ]
   },
