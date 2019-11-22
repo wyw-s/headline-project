@@ -9,12 +9,12 @@
     </el-col>
     <el-col :span="3" class="right">
       <!--头像-->
-      <img src="../assets/img/avatar.jpg" alt="">
+      <img :src="User.photo" alt="">
       <!--下拉菜单-->
       <el-dropdown trigger="click">
         <!--<span></span>-->
         <span class="el-dropdown-link">
-          邓紫棋
+          {{ User.name }}
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -34,6 +34,14 @@
 <script>
 export default {
   name: 'layout-header',
+  data () {
+    return {
+      User: {}
+    }
+  },
+  created () {
+    this.LoadUser()
+  },
   methods: {
     onLogout () {
       this.$confirm('此操作将退出登录状态', '退出提示', {
@@ -55,6 +63,22 @@ export default {
           type: 'info',
           message: '已取消退出'
         })
+      })
+    },
+    /**
+     * 获取用户个人资料
+     */
+    LoadUser () {
+      // 开始请求；
+      this.$axios({
+        // 设置请求方式；
+        method: 'GET',
+        // 设置请求地址
+        url: '/user/profile'
+      }).then(res => {
+        this.User = res.data.data
+      }).catch(() => {
+        this.$message.error('获取失败')
       })
     }
   }
