@@ -45,6 +45,8 @@
 </template>
 
 <script>
+// 引入event-bus文件；
+import EventBus from '../../utils/event-bus.js'
 export default {
   name: 'account',
   data () {
@@ -127,6 +129,10 @@ export default {
       }).then(res => {
         // 请求成功修改图片地址；
         this.formData.photo = res.data.data.photo
+        /**
+         * 触发当前实例的自定义事件
+         */
+        EventBus.$emit('UpDataUser', this.formData)
         this.$message({
           type: 'success',
           message: '上传成功'

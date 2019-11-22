@@ -32,6 +32,8 @@
 </template>
 
 <script>
+// 引入event-bus文件；
+import EventBus from '../utils/event-bus.js'
 export default {
   name: 'layout-header',
   data () {
@@ -41,6 +43,12 @@ export default {
   },
   created () {
     this.LoadUser()
+    /**
+     * 监听当前实例的自定义事件
+     */
+    EventBus.$on('UpDataUser', (res) => {
+      this.User = res
+    })
   },
   methods: {
     onLogout () {
@@ -81,6 +89,7 @@ export default {
         this.$message.error('获取失败')
       })
     }
+
   }
 }
 
