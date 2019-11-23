@@ -106,9 +106,7 @@ export default {
         }
       }).then(res => {
         this.images = res.data.data.results
-        console.log('获取成功')
       }).catch(() => {
-        console.log('获取失败')
       })
     },
     /**
@@ -135,11 +133,9 @@ export default {
           type: 'success',
           message: '操作成功'
         })
-        // console.log(res)
         // 更新图标展示；
         Collect.is_collected = !Collect.is_collected
       }).catch(() => {
-        // console.log(err)
         this.$message.error('操作失败')
       })
     },
@@ -181,9 +177,7 @@ export default {
       }).then(() => {
         // 上传成功，更新数据列表
         this.getimages(this.radio1 !== '全部')
-        console.log('上传成功')
       }).catch(() => {
-        console.log('上传失败')
       })
     }
   }

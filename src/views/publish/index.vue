@@ -8,7 +8,6 @@
         <el-input placeholder='文章名称' v-model="article.title"></el-input>
       </el-form-item>
       <el-form-item label="内容"  style="height: 300px">
-        <!--<el-input type="textarea" v-model="article.content"></el-input>-->
         <quill-editor
             :options="editorOption"
             ref="myQuillEditor"
@@ -17,27 +16,28 @@
         >
         </quill-editor>
       </el-form-item>
-      <!--<el-form-item label="封面">-->
-      <!--  <el-radio-group v-model="form.resource">-->
-      <!--    <el-radio label="单图"></el-radio>-->
-      <!--    <el-radio label="三图"></el-radio>-->
-      <!--    <el-radio label="无图"></el-radio>-->
-      <!--    <el-radio label="自动"></el-radio>-->
-      <!--  </el-radio-group>-->
-      <!--</el-form-item>-->
+      <el-form-item label="封面">
+        <el-radio-group v-model="article.cover.type">
+          <el-radio :label="1">单图</el-radio>
+          <el-radio :label="3">三图</el-radio>
+          <el-radio :label="0">无图</el-radio>
+          <el-radio :label="-1">自动</el-radio>
+        </el-radio-group>
+        <!--
+        根据选择的状态进行遍历
+        因为-1不能遍历，所以需要加判断
+        -->
+        <template v-if="article.cover.type !== -1">
+          <el-row :gutter="20">
+            <el-col :span="5" v-for="item in article.cover.type" :key="item">
+              <upload-image v-model="article.cover.images[item-1]"></upload-image>
+            </el-col>
+          </el-row>
+        </template>
+      </el-form-item>
       <el-form-item label="频道">
         <!--使用组件-->
         <channel-select v-model="article.channel_id"></channel-select>
-        <!--<el-select placeholder="请选择" v-model="article.channel_id">-->
-        <!--  &lt;!&ndash;option 会把下拉列表的value值，同步到region_id数据中&ndash;&gt;-->
-        <!--  &lt;!&ndash;默认选中所有频道&ndash;&gt;-->
-        <!--  <el-option-->
-        <!--      :key="item.id"-->
-        <!--      :label="item.name"-->
-        <!--      :value="item.id"-->
-        <!--      v-for="item in channels"-->
-        <!--  ></el-option>-->
-        <!--</el-select>-->
       </el-form-item>
       <el-form-item>
         <el-button @click="onSubmit(false)" type="primary">发表</el-button>
@@ -48,6 +48,8 @@
 </template>
 
 <script>
+// 引入上传组件；
+import UploadImage from './components/upload-image.vue'
 import ChannelSelect from '../../components/channel-select/index'
 // 引入样式
 import 'quill/dist/quill.core.css'
@@ -61,7 +63,8 @@ export default {
   components: {
     // eslint-disable-next-line vue/no-unused-components
     quillEditor,
-    ChannelSelect
+    ChannelSelect,
+    UploadImage
   },
   data () {
     return {
@@ -99,7 +102,6 @@ export default {
         url: `/articles/${this.$route.params.articleId}`
       }).then(res => {
         this.article = res.data.data
-        console.log(res.data)
       })
     },
     onSubmit (draft) {
@@ -147,6 +149,8 @@ export default {
         },
         data: this.article
       }).then(() => {
+        // 发表成功跳转页面；
+        this.$router.push('/article')
         this.$message({
           type: 'success',
           message: '发表成功'
@@ -177,23 +181,10 @@ export default {
         this.$message.error('修改失败')
       })
     }
-    // 用于获取频道列表
-    // loadChannels () {
-    //   // 这里不需要 token
-    //   // 发送axios请求；
-    //   this.$axios({
-    //     // 设置请求方式；
-    //     method: 'GET',
-    //     // 设置请求地址；
-    //     url: '/channels'
-    //   }).then(res => {
-    //     // console.log(res)
-    //     // 判断成立则把获取到的数据保存到数组中；
-    //     this.channels = res.data.data.channels
-    //   }).catch(() => {
-    //     console.log('获取数据失败')
-    //   })
-    // }
+    /**
+     * 用于获取频道列表
+     * 已被封装成单个组件使用
+     */
   }
 }
 </script>
